@@ -29,10 +29,11 @@ const rootNode = {
   name: path.basename(filename).replace(/\.jsx?/, ''),
   filename,
   depth: 0,
+  children[]
 };
 
 function extractModules(bodyItem) {
-  if (bodyItem.type === 'ImportDeclaration') {
+  if (bodyItem.type === 'ImportDeclaration' && !bodyItem.source.value.endsWith('css')) {
     return {
       name: bodyItem.specifiers[0].local.name,
       source: bodyItem.source.value,
@@ -119,7 +120,18 @@ function findContainerChild(node, body, imports, depth) {
 function processFile(node, file, depth) {
   const ast = babylon.parse(file, {
     sourceType: 'module',
-    plugins: ['jsx', 'classProperties'],
+    plugins: [
+      'asyncGenerators',
+      'classProperties',
+      'classProperties',
+      'decorators',
+      'dynamicImport',
+      'exportExtensions',
+      'flow',
+      'functionBind',
+      'functionSent',
+      'jsx',
+      'objectRestSpread'],
   });
 
   // Get a list of imports and try to figure out which are child components
